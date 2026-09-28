@@ -7,6 +7,7 @@
 	<source path="Source" />
 	
 	<haxelib name="openfl" />
+	<haxelib name="starling" />
 	
 	<assets path="Assets" rename="assets" />
 	

@@ -1,13 +1,17 @@
 package;
 
 import openfl.display.Sprite;
+import starling.core.Starling;
 
 class Main extends Sprite
 {
-	public function new()
-	{
-		super();
-		trace("Hello world!");
+    private var _starling:Starling;
 
-	}
+    public function new()
+    {
+        super();
+	trace("Hello world!");
+        _starling = new Starling(Game, stage);
+        _starling.start();
+    }
 }
