@@ -11,6 +11,7 @@ class Main extends Sprite
     {
         super();
 	trace("Hello world!");
+        trace("Registered assets:", openfl.utils.Assets.list());
         _starling = new Starling(Game, stage);
         _starling.start();
     }

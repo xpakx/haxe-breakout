@@ -1,17 +1,21 @@
-import starling.display.Quad;
+import starling.display.Image;
 import starling.display.Sprite;
+import starling.textures.Texture;
+import starling.textures.TextureSmoothing;
 import starling.utils.Color;
 
 import starling.events.Event;
 import starling.events.KeyboardEvent;
 import starling.events.EnterFrameEvent;
 import starling.utils.Color;
+
 import openfl.ui.Keyboard;
+import openfl.utils.Assets;
 
 class Game extends Sprite
 {
-    private var paddle:Quad;
-    private var ball:Quad; // TODO: should be a circle
+    private var paddle:Image;
+    private var ball:Image;
 
     private var leftPressed:Bool = false;
     private var rightPressed:Bool = false;
@@ -39,12 +43,22 @@ class Game extends Sprite
     private function onAddedToStage(e:Event):Void {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-        paddle = new Quad(100, 20, Color.RED);
+	var paddleTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/paddle.png"));
+        var ballTexture:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/ball.png"));
+
+
+        paddle = new Image(paddleTexture);
+	paddle.width = 100;
+	paddle.scaleY = paddle.scaleX;
+	paddle.textureSmoothing = TextureSmoothing.NONE;
         paddle.x = (stage.stageWidth - paddle.width) / 2;
         paddle.y = stage.stageHeight - 50;
         addChild(paddle);
 
-        ball = new Quad(14, 14, Color.RED);
+        ball = new Image(ballTexture);
+	ball.width = 14;
+	ball.scaleY = ball.scaleX;
+	ball.textureSmoothing = TextureSmoothing.NONE;
         resetBall();
         addChild(ball);
 
