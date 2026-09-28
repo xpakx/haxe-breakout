@@ -4,6 +4,8 @@ import starling.utils.Color;
 
 import starling.events.Event;
 import starling.events.KeyboardEvent;
+import starling.events.EnterFrameEvent;
+import starling.utils.Color;
 import openfl.ui.Keyboard;
 
 class Game extends Sprite
@@ -30,28 +32,40 @@ class Game extends Sprite
 
 	stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+        addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
         if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
 	    leftPressed = true;
-	    trace("Left pressed");
 	}
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
 	    rightPressed = true;
-	    trace("Right pressed");
 	}
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
         if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
 	    leftPressed = false;
-	    trace("Left released");
 	}
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
 	    rightPressed = false;
-	    trace("Right released");
 	}
+    }
+
+    private function onEnterFrame(e:EnterFrameEvent):Void {
+        var moveDistance:Float = PADDLE_SPEED * e.passedTime;
+
+        if (leftPressed) paddle.x -= moveDistance;
+        if (rightPressed) paddle.x += moveDistance;
+
+        if (paddle.x < 0) {
+            paddle.x = 0;
+        } else if (paddle.x + paddle.width > stage.stageWidth) {
+            paddle.x = stage.stageWidth - paddle.width;
+        }
     }
     
 }
+
+
