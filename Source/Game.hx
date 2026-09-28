@@ -16,6 +16,13 @@ class Game extends Sprite
 
     private static inline var PADDLE_SPEED:Float = 500.0;
 
+
+    // simple physics
+    private var vx:Float = 0.0;
+    private static inline var ACCELERATION:Float = 4500.0;
+    private static inline var MAX_SPEED:Float = 800.0;
+    private static inline var FRICTION:Float = 14.0;
+
     public function new()
     {
         super();
@@ -54,18 +61,30 @@ class Game extends Sprite
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
-        var moveDistance:Float = PADDLE_SPEED * e.passedTime;
+        var dt:Float = e.passedTime;
 
-        if (leftPressed) paddle.x -= moveDistance;
-        if (rightPressed) paddle.x += moveDistance;
+        var moveDir:Float = 0.0;
+        if (leftPressed) moveDir -= 1.0;
+        if (rightPressed) moveDir += 1.0;
+
+        if (moveDir != 0.0) {
+            vx += moveDir * ACCELERATION * dt;
+        } else {
+            vx -= vx * FRICTION * dt;
+        }
+
+        if (vx > MAX_SPEED) vx = MAX_SPEED;
+        if (vx < -MAX_SPEED) vx = -MAX_SPEED;
+
+        paddle.x += vx * dt;
 
         if (paddle.x < 0) {
             paddle.x = 0;
+	    vx = 0;
         } else if (paddle.x + paddle.width > stage.stageWidth) {
             paddle.x = stage.stageWidth - paddle.width;
+	    vx = 0;
         }
     }
     
 }
-
-
