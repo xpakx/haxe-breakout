@@ -16,6 +16,7 @@ class Game extends Sprite
 {
     private var paddle:Image;
     private var ball:Image;
+    private var bricks:Array<Image> = [];
 
     private var leftPressed:Bool = false;
     private var rightPressed:Bool = false;
@@ -33,6 +34,15 @@ class Game extends Sprite
     private var ballVx:Float = 0.0;
     private var ballVy:Float = 0.0;
     private static inline var BALL_SPEED:Float = 450.0;
+
+
+    private static inline var BRICK_ROWS:Int = 5;
+    private static inline var BRICK_COLS:Int = 8;
+    private static inline var BRICK_WIDTH:Float = 80.0;
+    private static inline var BRICK_HEIGHT:Float = 24.0;
+    private static inline var BRICK_PADDING:Float = 8.0;
+    private static inline var GRID_TOP_OFFSET:Float = 60.0;
+
 
     public function new()
     {
@@ -61,6 +71,8 @@ class Game extends Sprite
 	ball.textureSmoothing = TextureSmoothing.NONE;
         resetBall();
         addChild(ball);
+
+        createBricks(paddleTexture); // TODO: pass texture atlas instead
 
 	stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -156,4 +168,26 @@ class Game extends Sprite
             ballVx = (normalizedOffset * BALL_SPEED) + (vx * 0.25);
         }
     }
+
+    private function createBricks(baseTexture:Texture):Void {
+        var totalGridWidth:Float = (BRICK_COLS * BRICK_WIDTH) + ((BRICK_COLS - 1) * BRICK_PADDING);
+        var startX:Float = (stage.stageWidth - totalGridWidth) / 2;
+
+        for (row in 0...BRICK_ROWS) {
+            for (col in 0...BRICK_COLS) {
+                var brick:Image = new Image(baseTexture); // TODO: use atlas
+                brick.width = BRICK_WIDTH;
+                brick.height = BRICK_HEIGHT;
+                brick.textureSmoothing = TextureSmoothing.NONE;
+
+
+                brick.x = startX + col * (BRICK_WIDTH + BRICK_PADDING);
+                brick.y = GRID_TOP_OFFSET + row * (BRICK_HEIGHT + BRICK_PADDING);
+
+                addChild(brick);
+                bricks.push(brick);
+            }
+        }
+    }
+
 }
