@@ -3,6 +3,7 @@ import starling.display.Sprite;
 import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
 import starling.utils.Color;
+import starling.text.TextField;
 
 import starling.events.Event;
 import starling.events.KeyboardEvent;
@@ -47,6 +48,10 @@ class Game extends Sprite
     private static inline var GRID_TOP_OFFSET:Float = 60.0;
 
 
+    private var scoreLabel:TextField;
+    private var score:Int = 0;
+
+
     public function new()
     {
         super();
@@ -81,6 +86,19 @@ class Game extends Sprite
 	stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+        scoreLabel = new TextField(200, 40, "");
+        scoreLabel.format.setTo("Arial", 18, 0x000000);
+        scoreLabel.x = 10;
+        scoreLabel.y = 10;
+        addChild(scoreLabel);
+
+        score = 0;
+        updateUI();
+    }
+
+    private function updateUI():Void {
+        scoreLabel.text = "SCORE: " + score;
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
@@ -219,6 +237,11 @@ class Game extends Sprite
         }
     }
 
+    private function addScore(dPoints:Int):Void {
+        score += dPoints;
+        updateUI();
+    }
+
     private function checkBrickCollisions():Void {
         var ballBounds = ball.getBounds(stage);
 
@@ -228,6 +251,8 @@ class Game extends Sprite
             if (ballBounds.intersects(brick.getBounds(stage))) {
 	        // TODO ???
                 ballVy = -ballVy;
+
+		addScore(10);
 
                 // TODO: multiple hits?
                 removeChild(brick);
