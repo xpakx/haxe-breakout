@@ -49,9 +49,12 @@ class Game extends Sprite
 
 
     private var scoreLabel:TextField;
+    private var livesLabel:TextField;
     private var score:Int = 0;
+    private var lives:Int = 3;
 
 
+    var brickAtlas:Texture;
     public function new()
     {
         super();
@@ -63,7 +66,7 @@ class Game extends Sprite
 
 	var paddleTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/paddle.png"));
         var ballTexture:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/ball.png"));
-        var brickAtlas:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
+        brickAtlas = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
 
 
         paddle = new Image(paddleTexture);
@@ -93,12 +96,18 @@ class Game extends Sprite
         scoreLabel.y = 10;
         addChild(scoreLabel);
 
-        score = 0;
-        updateUI();
+        livesLabel = new TextField(200, 40, "");
+        livesLabel.format.setTo("Arial", 18, 0x000000);
+        livesLabel.x = stage.stageWidth - 210;
+        livesLabel.y = 10;
+        addChild(livesLabel);
+
+        resetGame();
     }
 
     private function updateUI():Void {
         scoreLabel.text = "SCORE: " + score;
+        livesLabel.text = "LIVES: " + lives;
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
@@ -177,7 +186,14 @@ class Game extends Sprite
         }
 
         if (ball.y > stage.stageHeight) {
-            resetBall();
+	    lives--;
+	    updateUI();
+
+	    if (lives <= 0) {
+                resetGame();
+	    } else {
+               resetBall();
+	    }
         }
 
         if (ball.getBounds(stage).intersects(paddle.getBounds(stage)) && ballVy > 0) {
@@ -258,9 +274,32 @@ class Game extends Sprite
                 removeChild(brick);
                 brick.dispose();
                 bricks.swapRemoveAt(i);
+
+		if (bricks.length == 0) {
+		    resetGame();
+		}
             }
             i--;
         }
+    }
+
+    private function resetGame():Void {
+        score = 0;
+        lives = 3;
+
+        updateUI();
+
+        clearBricks();
+        createBricks(brickAtlas); // TODO: do not recreate textures
+        resetBall();
+    }
+
+    private function clearBricks():Void {
+        for (brick in bricks) {
+            removeChild(brick);
+            brick.dispose();
+        }
+        bricks = [];
     }
 
 }
