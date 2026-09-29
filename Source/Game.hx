@@ -11,6 +11,7 @@ import starling.utils.Color;
 
 import openfl.ui.Keyboard;
 import openfl.utils.Assets;
+import openfl.geom.Rectangle;
 
 class Game extends Sprite
 {
@@ -36,11 +37,11 @@ class Game extends Sprite
     private static inline var BALL_SPEED:Float = 450.0;
 
 
-    private static inline var BRICK_ROWS:Int = 5;
+    private static inline var BRICK_ROWS:Int = 6;
     private static inline var BRICK_COLS:Int = 8;
-    private static inline var BRICK_WIDTH:Float = 80.0;
+    private static inline var BRICK_WIDTH:Float = 48.0;
     private static inline var BRICK_HEIGHT:Float = 24.0;
-    private static inline var BRICK_PADDING:Float = 8.0;
+    private static inline var BRICK_PADDING:Float = 1.0;
     private static inline var GRID_TOP_OFFSET:Float = 60.0;
 
 
@@ -55,6 +56,7 @@ class Game extends Sprite
 
 	var paddleTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/paddle.png"));
         var ballTexture:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/ball.png"));
+        var brickAtlas:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
 
 
         paddle = new Image(paddleTexture);
@@ -72,7 +74,7 @@ class Game extends Sprite
         resetBall();
         addChild(ball);
 
-        createBricks(paddleTexture); // TODO: pass texture atlas instead
+        createBricks(brickAtlas);
 
 	stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -169,16 +171,40 @@ class Game extends Sprite
         }
     }
 
-    private function createBricks(baseTexture:Texture):Void {
+
+    private function getBrickTexture(brickAtlas:Texture, column:Int, row:Int):Texture {
+	return Texture.fromTexture(
+			brickAtlas, new Rectangle(0, row*(96/6), 96/3, 96/6)
+	);
+    }
+
+    private function createBricks(brickAtlas:Texture):Void {
+	var blueBrick:Texture = getBrickTexture(brickAtlas, 0, 0);
+	var greenBrick:Texture = getBrickTexture(brickAtlas, 0, 1);
+	var yellowBrick:Texture = getBrickTexture(brickAtlas, 0, 2);
+	var orangeBrick:Texture = getBrickTexture(brickAtlas, 0, 3);
+	var redBrick:Texture = getBrickTexture(brickAtlas, 0, 4);
+	var purpleBrick:Texture = getBrickTexture(brickAtlas, 0, 5);
+	var rowTextures:Array<Texture> = [
+		blueBrick,
+		greenBrick,
+		yellowBrick,
+		orangeBrick,
+		redBrick,
+		purpleBrick,
+	];
+
         var totalGridWidth:Float = (BRICK_COLS * BRICK_WIDTH) + ((BRICK_COLS - 1) * BRICK_PADDING);
         var startX:Float = (stage.stageWidth - totalGridWidth) / 2;
 
         for (row in 0...BRICK_ROWS) {
             for (col in 0...BRICK_COLS) {
-                var brick:Image = new Image(baseTexture); // TODO: use atlas
+                var brickTexture = rowTextures[row % rowTextures.length];
+                var brick:Image = new Image(brickTexture);
                 brick.width = BRICK_WIDTH;
                 brick.height = BRICK_HEIGHT;
                 brick.textureSmoothing = TextureSmoothing.NONE;
+
 
 
                 brick.x = startX + col * (BRICK_WIDTH + BRICK_PADDING);
