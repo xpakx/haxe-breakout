@@ -13,6 +13,8 @@ import openfl.ui.Keyboard;
 import openfl.utils.Assets;
 import openfl.geom.Rectangle;
 
+using ArraySwapRemove;
+
 class Game extends Sprite
 {
     private var paddle:Image;
@@ -230,7 +232,7 @@ class Game extends Sprite
                 // TODO: multiple hits?
                 removeChild(brick);
                 brick.dispose();
-                bricks.remove(brick);
+                bricks.swapRemoveAt(i);
             }
             i--;
         }
