@@ -101,6 +101,7 @@ class Game extends Sprite
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
         updatePaddle(e.passedTime);
+	checkBrickCollisions();
         updateBall(e.passedTime);
     }
 
@@ -213,6 +214,25 @@ class Game extends Sprite
                 addChild(brick);
                 bricks.push(brick);
             }
+        }
+    }
+
+    private function checkBrickCollisions():Void {
+        var ballBounds = ball.getBounds(stage);
+
+        var i:Int = bricks.length - 1;
+        while (i >= 0) {
+            var brick:Image = bricks[i];
+            if (ballBounds.intersects(brick.getBounds(stage))) {
+	        // TODO ???
+                ballVy = -ballVy;
+
+                // TODO: multiple hits?
+                removeChild(brick);
+                brick.dispose();
+                bricks.remove(brick);
+            }
+            i--;
         }
     }
 
