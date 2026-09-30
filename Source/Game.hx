@@ -56,6 +56,10 @@ class Game extends Sprite
     private var lives:Int = 3;
 
 
+    private var statusLabel:TextField;
+    private var gameState:GameState;
+
+
     public function new()
     {
         super();
@@ -117,6 +121,13 @@ class Game extends Sprite
         livesLabel.y = 10;
         addChild(livesLabel);
 
+        statusLabel = new TextField(600, 80, "");
+        statusLabel.format.setTo("Arial", 28, 0x000000);
+        statusLabel.x = (stage.stageWidth - 600) / 2;
+        statusLabel.y = (stage.stageHeight - 80) / 2;
+        statusLabel.visible = false;
+        addChild(statusLabel);
+
         resetGame();
     }
 
@@ -132,6 +143,9 @@ class Game extends Sprite
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
 	    rightPressed = true;
 	}
+        if ((gameState != InProgress) && e.keyCode == Keyboard.SPACE) {
+            resetGame();
+        }
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
@@ -144,6 +158,8 @@ class Game extends Sprite
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
+        if (gameState != InProgress) return;
+
         updatePaddle(e.passedTime);
 	checkBrickCollisions();
         updateBall(e.passedTime);
@@ -205,7 +221,7 @@ class Game extends Sprite
 	    updateUI();
 
 	    if (lives <= 0) {
-                resetGame();
+                switchToLost();
 	    } else {
                resetBall();
 	    }
@@ -277,7 +293,7 @@ class Game extends Sprite
                 bricks.swapRemoveAt(i);
 
 		if (bricks.length == 0) {
-		    resetGame();
+		    switchToWon();
 		}
             }
             i--;
@@ -287,8 +303,10 @@ class Game extends Sprite
     private function resetGame():Void {
         score = 0;
         lives = 3;
+	gameState = InProgress;
 
         updateUI();
+        statusLabel.visible = false;
 
         clearBricks();
         createBricks();
@@ -301,6 +319,18 @@ class Game extends Sprite
             brick.dispose();
         }
         bricks = [];
+    }
+
+    private function switchToLost():Void {
+        gameState = Lost;
+        statusLabel.text = "You lost";
+        statusLabel.visible = true;
+    }
+
+    private function switchToWon():Void {
+        gameState = Won;
+        statusLabel.text = "You won";
+        statusLabel.visible = true;
     }
 
 }
