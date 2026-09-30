@@ -305,6 +305,10 @@ class Game extends Sprite
         lives = 3;
 	gameState = InProgress;
 
+        paddle.x = (stage.stageWidth - paddle.width) / 2;
+        paddle.y = stage.stageHeight - 50;
+	vx = 0.0;
+
         updateUI();
         statusLabel.visible = false;
 
