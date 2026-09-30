@@ -16,6 +16,8 @@ import openfl.geom.Rectangle;
 
 using ArraySwapRemove;
 
+typedef TextureSet = {healthy: Texture, scratched: Texture, destroyed: Texture};
+
 class Game extends Sprite
 {
     private var paddle:Image;
@@ -27,7 +29,7 @@ class Game extends Sprite
 
     private static inline var PADDLE_SPEED:Float = 500.0;
 
-    var brickTextures:Array<Texture>;
+    var brickTextures:Array<TextureSet>;
 
 
     // simple paddle physics
@@ -70,19 +72,38 @@ class Game extends Sprite
 	var paddleTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/paddle.png"));
         var ballTexture:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/ball.png"));
         var brickAtlas = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
+
 	var blueBrick:Texture = getBrickTexture(brickAtlas, 0, 0);
+	var blueBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 0);
+	var blueBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 0);
+
 	var greenBrick:Texture = getBrickTexture(brickAtlas, 0, 1);
+	var greenBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 1);
+	var greenBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 1);
+
 	var yellowBrick:Texture = getBrickTexture(brickAtlas, 0, 2);
+	var yellowBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 2);
+	var yellowBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 2);
+
 	var orangeBrick:Texture = getBrickTexture(brickAtlas, 0, 3);
+	var orangeBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 3);
+	var orangeBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 3);
+
 	var redBrick:Texture = getBrickTexture(brickAtlas, 0, 4);
+	var redBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 4);
+	var redBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 4);
+
 	var purpleBrick:Texture = getBrickTexture(brickAtlas, 0, 5);
+	var purpleBrickScratched:Texture = getBrickTexture(brickAtlas, 1, 5);
+	var purpleBrickDestroyed:Texture = getBrickTexture(brickAtlas, 2, 5);
+
 	brickTextures = [
-		blueBrick,
-		greenBrick,
-		yellowBrick,
-		orangeBrick,
-		redBrick,
-		purpleBrick,
+		{healthy: blueBrick, scratched: blueBrickScratched, destroyed: blueBrickDestroyed},
+		{healthy: greenBrick, scratched: greenBrickScratched, destroyed: greenBrickDestroyed},
+		{healthy: yellowBrick, scratched: yellowBrickScratched, destroyed: yellowBrickDestroyed},
+		{healthy: orangeBrick, scratched: orangeBrickScratched, destroyed: orangeBrickDestroyed},
+		{healthy: redBrick, scratched: redBrickScratched, destroyed: redBrickDestroyed},
+		{healthy: purpleBrick, scratched: purpleBrickScratched, destroyed: purpleBrickDestroyed},
 	];
 
 
@@ -240,7 +261,7 @@ class Game extends Sprite
 
     private function getBrickTexture(brickAtlas:Texture, column:Int, row:Int):Texture {
 	return Texture.fromTexture(
-			brickAtlas, new Rectangle(0, row*(96/6), 96/3, 96/6)
+			brickAtlas, new Rectangle(column*(96/3), row*(96/6), 96/3, 96/6)
 	);
     }
 
@@ -256,7 +277,7 @@ class Game extends Sprite
                 brick.x = startX + col * (Brick.BRICK_WIDTH + BRICK_PADDING);
                 brick.y = GRID_TOP_OFFSET + row * (Brick.BRICK_HEIGHT + BRICK_PADDING);
 
-		brick.setTexture(brickTexture);
+		brick.setTextures(brickTexture.healthy, brickTexture.scratched, brickTexture.destroyed);
 
                 addChild(brick);
                 bricks.push(brick);

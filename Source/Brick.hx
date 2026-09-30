@@ -21,12 +21,27 @@ class Brick extends Sprite
     private var image:Image;
     private var lives:Int = 2;
 
+    private var healthyTexture:Texture;
+    private var scratchedTexture:Texture;
+    private var destroyedTexture:Texture;
+
     public function new()
     {
         super();
     }
 
-    public function setTexture(brickTexture:Texture):Void {
+    public function setTextures(
+        healthy:Texture,
+	scratched:Texture,
+	destroyed:Texture
+    ):Void {
+        healthyTexture = healthy;
+	scratchedTexture = scratched;
+	destroyedTexture = destroyed;
+        setTexture(healthyTexture);
+    }
+
+    private function setTexture(brickTexture:Texture):Void {
 	if (image == null) 
         {
 	    image = new Image(brickTexture);
@@ -51,6 +66,11 @@ class Brick extends Sprite
 
     public function hit():Bool {
         lives -= 1;
+	if (lives == 1) {
+	    setTexture(destroyedTexture);
+	} if (lives == 2) {
+	    setTexture(scratchedTexture);
+	}
 	return lives <= 0 ;
     }
 }
