@@ -20,7 +20,7 @@ class Game extends Sprite
 {
     private var paddle:Image;
     private var ball:Image;
-    private var bricks:Array<Image> = [];
+    private var bricks:Array<Brick> = [];
 
     private var leftPressed:Bool = false;
     private var rightPressed:Bool = false;
@@ -44,8 +44,6 @@ class Game extends Sprite
 
     private static inline var BRICK_ROWS:Int = 6;
     private static inline var BRICK_COLS:Int = 8;
-    private static inline var BRICK_WIDTH:Float = 48.0;
-    private static inline var BRICK_HEIGHT:Float = 24.0;
     private static inline var BRICK_PADDING:Float = 1.0;
     private static inline var GRID_TOP_OFFSET:Float = 60.0;
 
@@ -248,21 +246,17 @@ class Game extends Sprite
 
     private function createBricks():Void {
 
-        var totalGridWidth:Float = (BRICK_COLS * BRICK_WIDTH) + ((BRICK_COLS - 1) * BRICK_PADDING);
+        var totalGridWidth:Float = (BRICK_COLS * Brick.BRICK_WIDTH) + ((BRICK_COLS - 1) * BRICK_PADDING);
         var startX:Float = (stage.stageWidth - totalGridWidth) / 2;
 
         for (row in 0...BRICK_ROWS) {
             for (col in 0...BRICK_COLS) {
                 var brickTexture = brickTextures[row % brickTextures.length];
-                var brick:Image = new Image(brickTexture);
-                brick.width = BRICK_WIDTH;
-                brick.height = BRICK_HEIGHT;
-                brick.textureSmoothing = TextureSmoothing.NONE;
+	    	var brick = new Brick();
+                brick.x = startX + col * (Brick.BRICK_WIDTH + BRICK_PADDING);
+                brick.y = GRID_TOP_OFFSET + row * (Brick.BRICK_HEIGHT + BRICK_PADDING);
 
-
-
-                brick.x = startX + col * (BRICK_WIDTH + BRICK_PADDING);
-                brick.y = GRID_TOP_OFFSET + row * (BRICK_HEIGHT + BRICK_PADDING);
+		brick.setTexture(brickTexture);
 
                 addChild(brick);
                 bricks.push(brick);
@@ -280,17 +274,19 @@ class Game extends Sprite
 
         var i:Int = bricks.length - 1;
         while (i >= 0) {
-            var brick:Image = bricks[i];
+            var brick:Brick = bricks[i];
             if (ballBounds.intersects(brick.getBounds(stage))) {
 	        // TODO ???
                 ballVy = -ballVy;
 
-		addScore(10);
+		var destroyed = brick.hit();
+		if (destroyed) {
+			addScore(10);
 
-                // TODO: multiple hits?
-                removeChild(brick);
-                brick.dispose();
-                bricks.swapRemoveAt(i);
+			removeChild(brick);
+			brick.dispose();
+			bricks.swapRemoveAt(i);
+		}
 
 		if (bricks.length == 0) {
 		    switchToWon();
