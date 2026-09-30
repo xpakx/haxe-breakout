@@ -27,6 +27,8 @@ class Game extends Sprite
 
     private static inline var PADDLE_SPEED:Float = 500.0;
 
+    var brickTextures:Array<Texture>;
+
 
     // simple paddle physics
     private var vx:Float = 0.0;
@@ -54,7 +56,6 @@ class Game extends Sprite
     private var lives:Int = 3;
 
 
-    var brickAtlas:Texture;
     public function new()
     {
         super();
@@ -66,7 +67,21 @@ class Game extends Sprite
 
 	var paddleTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/paddle.png"));
         var ballTexture:Texture   = Texture.fromBitmapData(Assets.getBitmapData("assets/ball.png"));
-        brickAtlas = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
+        var brickAtlas = Texture.fromBitmapData(Assets.getBitmapData("assets/bricks.png"));
+	var blueBrick:Texture = getBrickTexture(brickAtlas, 0, 0);
+	var greenBrick:Texture = getBrickTexture(brickAtlas, 0, 1);
+	var yellowBrick:Texture = getBrickTexture(brickAtlas, 0, 2);
+	var orangeBrick:Texture = getBrickTexture(brickAtlas, 0, 3);
+	var redBrick:Texture = getBrickTexture(brickAtlas, 0, 4);
+	var purpleBrick:Texture = getBrickTexture(brickAtlas, 0, 5);
+	brickTextures = [
+		blueBrick,
+		greenBrick,
+		yellowBrick,
+		orangeBrick,
+		redBrick,
+		purpleBrick,
+	];
 
 
         paddle = new Image(paddleTexture);
@@ -84,7 +99,7 @@ class Game extends Sprite
         resetBall();
         addChild(ball);
 
-        createBricks(brickAtlas);
+        createBricks();
 
 	stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 	stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -215,28 +230,14 @@ class Game extends Sprite
 	);
     }
 
-    private function createBricks(brickAtlas:Texture):Void {
-	var blueBrick:Texture = getBrickTexture(brickAtlas, 0, 0);
-	var greenBrick:Texture = getBrickTexture(brickAtlas, 0, 1);
-	var yellowBrick:Texture = getBrickTexture(brickAtlas, 0, 2);
-	var orangeBrick:Texture = getBrickTexture(brickAtlas, 0, 3);
-	var redBrick:Texture = getBrickTexture(brickAtlas, 0, 4);
-	var purpleBrick:Texture = getBrickTexture(brickAtlas, 0, 5);
-	var rowTextures:Array<Texture> = [
-		blueBrick,
-		greenBrick,
-		yellowBrick,
-		orangeBrick,
-		redBrick,
-		purpleBrick,
-	];
+    private function createBricks():Void {
 
         var totalGridWidth:Float = (BRICK_COLS * BRICK_WIDTH) + ((BRICK_COLS - 1) * BRICK_PADDING);
         var startX:Float = (stage.stageWidth - totalGridWidth) / 2;
 
         for (row in 0...BRICK_ROWS) {
             for (col in 0...BRICK_COLS) {
-                var brickTexture = rowTextures[row % rowTextures.length];
+                var brickTexture = brickTextures[row % brickTextures.length];
                 var brick:Image = new Image(brickTexture);
                 brick.width = BRICK_WIDTH;
                 brick.height = BRICK_HEIGHT;
@@ -290,7 +291,7 @@ class Game extends Sprite
         updateUI();
 
         clearBricks();
-        createBricks(brickAtlas); // TODO: do not recreate textures
+        createBricks();
         resetBall();
     }
 
