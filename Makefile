@@ -2,7 +2,7 @@
 
 
 dev:
-	openfl test html5
+	openfl test html5 -nolaunch
 
 
 build:
