@@ -64,6 +64,7 @@ class Game extends Sprite
     {
         super();
 	addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+	GameAPI.setGame(this);
     }
 
     private function onAddedToStage(e:Event):Void {
